@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div></div>
+
+    <script>
+      data = [
+        "467..114..",
+        "...*......",
+        "..35..633.",
+        "......#...",
+        "617*......",
+        ".....+.58.",
+        "..592.....",
+        "......755.",
+        "...$.*....",
+        ".664.598..",
+      ];
+
+      const isSpecialChar = (c) => c !== "." && !c.match(/\d/);
+
+      const isAdjacentToSpecialChar = (
+        number,
+        numberIndex,
+        line,
+        lineIndex,
+        lines
+      ) => {
+        let flag = false;
+        number.split("").forEach((el, i) => {
+          console.log(el);
+          // Top
+          // If lineIndex == 0 Don't look l-1
+          if (lineIndex !== 0) {
+            console.log(
+              "top",
+              lines[lineIndex - 1][numberIndex + i - 1],
+              lines[lineIndex - 1][numberIndex + i],
+              lines[lineIndex - 1][numberIndex + i + 1]
+            );
+            // Left
+            if (
+              numberIndex !== 0 &&
+              i == 0 &&
+              isSpecialChar(lines[lineIndex - 1][numberIndex + i - 1])
+            )
+              flag = true;
+
+            // Center
+            if (isSpecialChar(lines[lineIndex - 1][numberIndex + i]))
+              flag = true;
+
+            // Right
+            if (
+              numberIndex + i !== line.length - 1 &&
+              i == number.length - 1 &&
+              isSpecialChar(lines[lineIndex - 1][numberIndex + i + 1])
+            )
+              flag = true;
+          }
+
+          console.log(line[numberIndex - 1], line[numberIndex + 1]);
+          // Left
+          if (
+            numberIndex !== 0 &&
+            i == 0 &&
+            isSpecialChar(line[numberIndex - 1])
+          )
+            flag = true;
+
+          // Right
+          if (
+            numberIndex + i !== line.length - 1 &&
+            i == number.length - 1 &&
+            isSpecialChar(line[numberIndex + i + 1])
+          )
+            flag = true;
+
+          // Bottom
+          // If lineIndex == lines.length-1 don't look l+1
+          if (lineIndex < lines.length - 1) {
+            console.log(
+              "bottom",
+              lines[lineIndex + 1][numberIndex + i - 1],
+              lines[lineIndex + 1][numberIndex + i],
+              lines[lineIndex + 1][numberIndex + i + 1]
+            );
+            // Left
+            if (
+              numberIndex !== 0 &&
+              i == 0 &&
+              isSpecialChar(lines[lineIndex + 1][numberIndex + i - 1])
+            )
+              flag = true;
+
+            // Center
+            if (isSpecialChar(lines[lineIndex + 1][numberIndex + i]))
+              flag = true;
+
+            // Right
+            if (
+              numberIndex + i !== line.length - 1 &&
+              i == number.length - 1 &&
+              isSpecialChar(lines[lineIndex + 1][numberIndex + i + 1])
+            )
+              flag = true;
+          }
+        });
+
+        console.log(flag);
+        return flag;
+      };
+
+      const lines = data;
+      let sum = 0;
+
+      lines.forEach((line, lineIndex) => {
+        console.log(line);
+        line.match(/[\d]+/g)?.forEach((number) => {
+          console.log(number, line.indexOf(number), lineIndex);
+          const numberIndex = line.indexOf(number);
+
+          if (
+            isAdjacentToSpecialChar(number, numberIndex, line, lineIndex, lines)
+          ) {
+            lines[lineIndex] = lines[lineIndex].replace(
+              number,
+              `<strong style="color: red;">${number}</strong>`
+            );
+            sum += +number;
+          } else {
+            lines[lineIndex] = lines[lineIndex];
+          }
+        });
+      });
+
+      console.log(lines);
+      document.querySelector("div").innerHTML = lines.map((l) => `<p><pre>${l}</pre></p>`).join('');
+
+      console.log(sum);
+    </script>
+  </body>
+</html>
